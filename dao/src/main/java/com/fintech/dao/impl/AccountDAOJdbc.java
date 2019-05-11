@@ -1,7 +1,7 @@
 package com.fintech.dao.impl;
 
 import com.fintech.dao.AccountDAO;
-import com.fintech.model.Account;
+import com.fintech.domain.Account;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -33,11 +33,6 @@ public class AccountDAOJdbc implements AccountDAO {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public void save(Account account) {
-
     }
 
     @Override

@@ -3,45 +3,40 @@ package com.fintech.core;
 import com.fintech.core.exception.InsufficientFundsException;
 import com.fintech.core.exception.NoPermissionException;
 import com.fintech.dao.AccountDAO;
-import com.fintech.dao.impl.AccountDAOJdbc;
-import com.fintech.model.Account;
+import com.fintech.dao.TransferDAO;
+import com.fintech.domain.Account;
+import com.fintech.enums.TransferStatus;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author d.mikheev 08.05.19
  */
 public class SimpleTransferService implements TransferService {
+    public static int EXECUTOR_SHUTDOWN_DELAY_SEC = 10;
     private AccountDAO accountDAO;
+    private TransferDAO transferDAO;
     private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
-    public SimpleTransferService(AccountDAOJdbc accountDAO) {
+    public SimpleTransferService(AccountDAO accountDAO, TransferDAO transferDAO) {
         this.accountDAO = accountDAO;
+        this.transferDAO = transferDAO;
     }
 
-    public Account get(String id) {
-        return accountDAO.get(id);
+    public TransferStatus get(String id) {
+        return TransferStatus.valueOf(transferDAO.get(id).getStatus());
     }
 
-    @Override
-    public void save() {
-        try {
-//            accountDAO.save(new Account("acc1",100l,null));
-//            Account acc = accountDAO.find("acc1");
-//            System.out.println(acc.getAmount());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private Account checkSender(Long clientId, String acc, Long amount) throws NoPermissionException, InsufficientFundsException {
         Account account = accountDAO.get(acc);
         if (account == null)
-            throw new NoSuchElementException(String.format("Account %s doesn't exist", acc));
+            throw new NoSuchElementException(String.format("Sender account %s doesn't exist", acc));
         if (!account.getClientid().equals(clientId))
             throw new NoPermissionException(String.format("Operation not avalible clientId %s", clientId));
         if (account.getAmount() < amount)
@@ -52,7 +47,7 @@ public class SimpleTransferService implements TransferService {
     private Account checkReceiver(String acc) {
         Account account = accountDAO.get(acc);
         if (account == null)
-            throw new NoSuchElementException(String.format("Account %s doesn't exist", acc));
+            throw new NoSuchElementException(String.format("Receiver account %s doesn't exist", acc));
         return account;
     }
 
@@ -62,58 +57,32 @@ public class SimpleTransferService implements TransferService {
         Account receiver = checkReceiver(accTo);
 
         String uuid = UUID.randomUUID().toString();
-        //TODO:Save transfer
+        transferDAO.init(uuid, accFrom, accTo, amount);
 
         Runnable transferTask = () -> {
-            accountDAO.sendFunds(sender, receiver, amount);
+            boolean success = accountDAO.sendFunds(sender, receiver, amount);
+            if (success) {
+                transferDAO.updateStatus(uuid, TransferStatus.SUCCESSFUL.getVal());
+                return;
+            }
+            transferDAO.updateStatus(uuid, TransferStatus.FAILED.getVal());
         };
 
         executor.execute(transferTask);
         return uuid;
     }
 
-    /**
-     * Initialize service.
-     */
-    @PostConstruct
-    public void init() {
+    @PreDestroy
+    public void finish() {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(EXECUTOR_SHUTDOWN_DELAY_SEC, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
+
     }
-
-    /**
-     * Terminate service.
-     */
-//    @PreDestroy
-//    public void shutdown() {
-//        executor.shutdownNow();
-//        transferQueue.clear();
-//    }
-//
-//    private void processQueue() {
-//        while (transferQueue.size() > 0) {
-////            List<Transfer> transfers = getBatch();
-//
-//        }
-//    }
-//
-//    public void startTransaction(Transfer transfer) {
-//        transferQueue.add(transfer);
-//    }
-//
-//    public void addNewTransfer(Transfer transfer) {
-//        transferQueue.add(transfer);
-//    }
-
-
-//    private List<Transfer> getBatch() {
-//        List<Transfer> batch = new ArrayList<>();
-//        Transfer nextTransfer;
-//        for (int i = 0; i < BATCH_SIZE; i++) {
-//            nextTransfer = transferQueue.poll();
-//            if (nextTransfer == null)
-//                break;
-//            batch.add(nextTransfer);
-//        }
-//        return batch;
-//    }
 
 }

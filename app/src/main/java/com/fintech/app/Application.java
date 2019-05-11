@@ -4,6 +4,7 @@ import com.fintech.config.DBCPDataSource;
 import com.fintech.core.SimpleTransferService;
 import com.fintech.core.TransferService;
 import com.fintech.dao.impl.AccountDAOJdbc;
+import com.fintech.dao.impl.TransferDAOJdbc;
 import com.fintech.web.controller.TransferController;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -18,6 +19,9 @@ import java.io.IOException;
  * @author d.mikheev on 09.05.19
  */
 public class Application {
+    private static final String ROOT = "http://localhost";
+    private static final int PORT = 8080;
+
     private HttpServer server;
 
     public static void main(String[] args) throws IOException {
@@ -36,12 +40,12 @@ public class Application {
         resourceConfig.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(new SimpleTransferService(new AccountDAOJdbc(h2.getDataSource()))).to(TransferService.class);
+                bind(new SimpleTransferService(new AccountDAOJdbc(h2.getDataSource()), new TransferDAOJdbc(h2.getDataSource()))).to(TransferService.class);
             }
         });
 
         HttpHandler endpoint = RuntimeDelegate.getInstance().createEndpoint(resourceConfig, HttpHandler.class);
-        server = HttpServer.createSimpleServer("http://localhost", 8080);
+        server = HttpServer.createSimpleServer(ROOT, PORT);
         server.getServerConfiguration().addHttpHandler(endpoint);
         try {
             h2.createDB();
