@@ -1,0 +1,6 @@
+rootProject.name = 'transfer-service'
+include 'app'
+include 'web'
+include 'core'
+include 'dao'
+
