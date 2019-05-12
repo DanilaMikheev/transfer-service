@@ -3,12 +3,12 @@ package com.fintech.web.controller;
 import com.fintech.core.TransferService;
 import com.fintech.core.exception.InsufficientFundsException;
 import com.fintech.core.exception.NoPermissionException;
+import com.fintech.enums.TransferStatus;
 import com.fintech.web.data.TransferData;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -23,25 +23,22 @@ public class TransferController {
     private TransferService transferService;
 
 
-    @GET
+    @POST
     @Path(("/transfers"))
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-    public String createTransfer(@Valid TransferData transferRequest) throws NoPermissionException, InsufficientFundsException {
-        transferService.processTransfer(1l, "40817", "40818", 100l);
-//        Account account = transferService.get("40817");
-//        System.out.println(account.getAmount());
-
-        return "Shit works";
+    public String createTransfer(@Valid TransferData request) throws NoPermissionException, InsufficientFundsException {
+        String uid = transferService.processTransfer(request.getClientId(), request.getFrom(), request.getTo(), request.getAmount());
+        return uid;
     }
 
     @GET
     @Path("/transfers/{id}")
+    @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-    public Response getTransferStatus(@PathParam("id") String id) {
-        return Response.ok()
-                .entity(null)
-                .build();
+    public String getTransferStatus(@PathParam("id") String id) {
+        TransferStatus status = transferService.get(id);
+        return String.valueOf(status.getVal());
     }
 
 

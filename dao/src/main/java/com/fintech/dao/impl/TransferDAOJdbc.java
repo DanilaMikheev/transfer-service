@@ -18,8 +18,8 @@ public class TransferDAOJdbc implements TransferDAO {
 
     private static final String FIND_BY_ID = "SELECT * FROM Transfer WHERE id = ?";
     private static final String FIND_STATUS_BY_ID = "SELECT status FROM Transfer WHERE id = ?";
-    private final static String INSERT_NEW = "INSERT INTO Transfer (id,accFrom,accTo,amount, status,updated) values (?,?,?,?,?)";
-    private final static String UPDATE_STATUS_BY_UID = "UPDATE Transfer SET status=? and updated=? where uid=?";
+    private final static String INSERT_NEW = "INSERT INTO Transfer (id,accFrom,accTo,amount, status,updated) values (?,?,?,?,?,?)";
+    private final static String UPDATE_STATUS_BY_UID = "UPDATE Transfer SET status=?, updated=? where id=?";
     private DataSource dataSource;
 
     public TransferDAOJdbc(DataSource ds) {
@@ -42,7 +42,7 @@ public class TransferDAOJdbc implements TransferDAO {
     public boolean updateStatus(String uid, int status) {
         QueryRunner run = new QueryRunner(dataSource);
         try {
-            int updated = run.update(UPDATE_STATUS_BY_UID, status, new Timestamp(System.currentTimeMillis()), uid);
+            int updated = run.update(UPDATE_STATUS_BY_UID, status, new Timestamp(System.currentTimeMillis()+1000000l), uid);
             return updated == 1;
         } catch (SQLException sqle) {
             sqle.printStackTrace();

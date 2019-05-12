@@ -5,7 +5,9 @@ import com.fintech.core.exception.NoPermissionException;
 import com.fintech.dao.AccountDAO;
 import com.fintech.dao.TransferDAO;
 import com.fintech.domain.Account;
+import com.fintech.domain.Transfer;
 import com.fintech.enums.TransferStatus;
+import lombok.AllArgsConstructor;
 
 import javax.annotation.PreDestroy;
 import java.util.NoSuchElementException;
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author d.mikheev 08.05.19
  */
 public class SimpleTransferService implements TransferService {
-    public static int EXECUTOR_SHUTDOWN_DELAY_SEC = 10;
+    public static int SHUTDOWN_DELAY_SEC = 10;
     private AccountDAO accountDAO;
     private TransferDAO transferDAO;
     private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
@@ -29,9 +31,9 @@ public class SimpleTransferService implements TransferService {
     }
 
     public TransferStatus get(String id) {
-        return TransferStatus.valueOf(transferDAO.get(id).getStatus());
+        Transfer transfer = transferDAO.get(id);
+        return TransferStatus.valueOf(transfer.getStatus());
     }
-
 
     private Account checkSender(Long clientId, String acc, Long amount) throws NoPermissionException, InsufficientFundsException {
         Account account = accountDAO.get(acc);
@@ -56,19 +58,10 @@ public class SimpleTransferService implements TransferService {
         Account sender = checkSender(clientId, accFrom, amount);
         Account receiver = checkReceiver(accTo);
 
-        String uuid = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         transferDAO.init(uuid, accFrom, accTo, amount);
 
-        Runnable transferTask = () -> {
-            boolean success = accountDAO.sendFunds(sender, receiver, amount);
-            if (success) {
-                transferDAO.updateStatus(uuid, TransferStatus.SUCCESSFUL.getVal());
-                return;
-            }
-            transferDAO.updateStatus(uuid, TransferStatus.FAILED.getVal());
-        };
-
-        executor.execute(transferTask);
+        executor.execute(new TransferTask(uuid, sender, receiver, amount, 1));
         return uuid;
     }
 
@@ -76,13 +69,42 @@ public class SimpleTransferService implements TransferService {
     public void finish() {
         executor.shutdown();
         try {
-            if (!executor.awaitTermination(EXECUTOR_SHUTDOWN_DELAY_SEC, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(SHUTDOWN_DELAY_SEC, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
             executor.shutdownNow();
         }
 
+    }
+
+    @AllArgsConstructor
+    private class TransferTask implements Runnable {
+        private String uuid;
+        private Account sender;
+        private Account receiver;
+        private Long amount;
+        private int attempt;
+
+        @Override
+        public void run() {
+            boolean success = accountDAO.sendFunds(sender, receiver, amount);
+            if (success) {
+                transferDAO.updateStatus(uuid, TransferStatus.SUCCESSFUL.getVal());
+                return;
+            }
+            transferDAO.updateStatus(uuid, TransferStatus.FAILED.getVal());
+            if (attempt < 5) // infinity check
+            {
+                try {
+                    executor.execute(new TransferTask(uuid, checkSender(sender.getClientid(),sender.getId(),amount), checkReceiver(receiver.getId()), amount, attempt + 1));
+                } catch (NoPermissionException e) {
+                    e.printStackTrace();
+                } catch (InsufficientFundsException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

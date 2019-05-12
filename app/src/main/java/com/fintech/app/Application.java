@@ -12,6 +12,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import javax.annotation.PreDestroy;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
 
@@ -21,15 +22,21 @@ import java.io.IOException;
 public class Application {
     private static final String ROOT = "http://localhost";
     private static final int PORT = 8080;
+    private static final String DB_INIT_FILE = "data.sql";
 
     private HttpServer server;
 
     public static void main(String[] args) throws IOException {
         Application application = new Application();
         application.run();
-        System.out.println("Application has started. For exit press 'Enter'");
+        System.out.println("Jersey has started");
         System.in.read();
         application.shoutDown();
+    }
+
+    @PreDestroy
+    public void shoutDown() {
+        server.shutdown();
     }
 
     public void run() {
@@ -48,14 +55,12 @@ public class Application {
         server = HttpServer.createSimpleServer(ROOT, PORT);
         server.getServerConfiguration().addHttpHandler(endpoint);
         try {
-            h2.createDB();
+            h2.createDB(DB_INIT_FILE);
             server.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void shoutDown() {
-        server.shutdown();
-    }
+
 }

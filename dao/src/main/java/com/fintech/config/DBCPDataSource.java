@@ -2,12 +2,14 @@ package com.fintech.config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.h2.Driver;
+import org.h2.tools.RunScript;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * @author d.mikheev on 11.05.19
@@ -41,29 +43,16 @@ public class DBCPDataSource {
         return ds;
     }
 
-    public void createDB() {
-
+    public void createDB(String dbInitFile) {
+        ClassLoader classLoader = getClass().getClassLoader();
         try (Connection conn = this.getConnection()) {
-            Statement st = conn.createStatement();
-            st.execute("create table account(id varchar(10), amount integer, clientid integer)");
-            st.execute("insert into account values ('40817',1000,1 )");
-            st.execute("insert into account values ('40818',1000,2 )");
-
-//            st.execute("create table account(id varchar(10), amount integer, clientid integer)");
-//            st.execute("insert into account values ('40817',1000,1 )");
-//            st.execute("insert into account values ('40818',1000,2 )");
-//
-
-            Statement stmt = conn.createStatement();
-            ResultSet rset = stmt.executeQuery("select id from account");
-            while (rset.next()) {
-                String name = rset.getString(1);
-                System.out.println(name);
-            }
+            File file = new File(classLoader.getResource(dbInitFile).getFile());
+            RunScript.execute(conn, new FileReader(file));
+            System.out.println(file.getName()+" executed");
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
-
-
 }

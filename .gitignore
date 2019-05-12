@@ -33,7 +33,6 @@ cmake-build-release/
 *.iws
 
 # IntelliJ
-out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -54,7 +53,6 @@ fabric.properties
 .idea/httpRequests
 ### Gradle template
 .gradle
-/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -81,7 +79,6 @@ gradle-app.setting
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
