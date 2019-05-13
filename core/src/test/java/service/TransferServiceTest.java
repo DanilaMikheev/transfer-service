@@ -7,6 +7,7 @@ import com.fintech.enums.TransferStatus;
 import configuration.TransferServiceConfig;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
@@ -20,6 +21,11 @@ public class TransferServiceTest extends TransferServiceConfig {
     private static final String existedAcc2 = "40817810123456789012";
     private static final String existedTransferUid = "d9bbad7e0cea42b9bcd933ae524230db";
     private static final String notExistedTransferUid = "cd933ae524230dbd9bbad7e0cea42b9b";
+
+    @Before
+    public void initDB() {
+        h2.createDB(TEST_DB_INIT_FILE);
+    }
 
     @After
     public void closeAll() {
