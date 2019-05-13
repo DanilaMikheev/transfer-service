@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author d.mikheev on 11.05.19
@@ -52,6 +53,15 @@ public class DBCPDataSource {
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void dropAll(){
+        try (Connection conn = this.getConnection()) {
+            Statement st = conn.createStatement();
+            st.execute("DROP ALL OBJECTS");
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

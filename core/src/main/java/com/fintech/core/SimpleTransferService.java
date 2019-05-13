@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SimpleTransferService implements TransferService {
     public static int SHUTDOWN_DELAY_SEC = 10;
+    public static int REPEAT_TRANSACTION_ATTEMPTS = 10;
     private AccountDAO accountDAO;
     private TransferDAO transferDAO;
     private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
@@ -32,6 +33,8 @@ public class SimpleTransferService implements TransferService {
 
     public TransferStatus get(String id) {
         Transfer transfer = transferDAO.get(id);
+        if (transfer==null)
+            throw new NoSuchElementException(String.format("Transfer with id %s not exists",id));
         return TransferStatus.valueOf(transfer.getStatus());
     }
 
@@ -40,7 +43,7 @@ public class SimpleTransferService implements TransferService {
         if (account == null)
             throw new NoSuchElementException(String.format("Sender account %s doesn't exist", acc));
         if (!account.getClientid().equals(clientId))
-            throw new NoPermissionException(String.format("Operation not avalible clientId %s", clientId));
+            throw new NoPermissionException(String.format("Operation not avalible for clientId %s", clientId));
         if (account.getAmount() < amount)
             throw new InsufficientFundsException(String.format("Not enought funds, avalible %s, required %s", account.getAmount(), amount));
         return account;
@@ -94,14 +97,13 @@ public class SimpleTransferService implements TransferService {
                 return;
             }
             transferDAO.updateStatus(uuid, TransferStatus.FAILED.getVal());
-            if (attempt < 5) // infinity check
+            if (attempt < REPEAT_TRANSACTION_ATTEMPTS) // infinity check
             {
                 try {
                     executor.execute(new TransferTask(uuid, checkSender(sender.getClientid(),sender.getId(),amount), checkReceiver(receiver.getId()), amount, attempt + 1));
                 } catch (NoPermissionException e) {
-                    e.printStackTrace();
                 } catch (InsufficientFundsException e) {
-                    e.printStackTrace();
+                    //other transaction "steal" money from acc
                 }
             }
         }

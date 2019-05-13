@@ -17,13 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class TransferData {
     @NotBlank
-    private Integer systemId;
-    @NotBlank
     private Long clientId;
     @AccountId
-    private String from;
+    private String fromAcc;
     @AccountId
-    private String to;
+    private String toAcc;
     @NotBlank
     private Long amount;
 }

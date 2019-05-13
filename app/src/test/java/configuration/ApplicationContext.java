@@ -32,10 +32,11 @@ public class ApplicationContext {
     protected WebTarget httpClient;
     protected AccountDAO accountDAO;
     protected TransferDAO transferDAO;
-    private DBCPDataSource h2;
+    protected DBCPDataSource h2;
 
     public ApplicationContext(){
         initContext();
+        initDB();
     }
 
     public void initContext(){
@@ -63,7 +64,8 @@ public class ApplicationContext {
         }
     }
 
-    public void initDB() throws Exception {
+    public void initDB(){
         h2.createDB(TEST_DB_INIT_FILE);
     }
+
 }

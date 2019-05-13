@@ -1,4 +1,6 @@
 jar {
+    baseName = 'transfer-service'
+    version =  '0.1.0'
     manifest {
         attributes "Main-Class": "com.fintech.app.Application"
     }

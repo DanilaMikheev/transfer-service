@@ -37,7 +37,8 @@ public class AccountDAOJdbc implements AccountDAO {
 
     @Override
     public boolean sendFunds(Account from, Account to, Long amount) {
-
+        if ((from==null)||(to==null))
+            return false;
         try (Connection conn = dataSource.getConnection()) {
             conn.setAutoCommit(false);
             QueryRunner run = new QueryRunner(dataSource);

@@ -11,6 +11,11 @@ allprojects {
 subprojects {
     apply plugin: "java"
 
+    test {
+        useJUnit()
+        maxHeapSize = '2G'
+    }
+    
     sourceCompatibility = '1.11'
     targetCompatibility = '1.11'
 
@@ -25,7 +30,3 @@ group 'com.fintech'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.11
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
