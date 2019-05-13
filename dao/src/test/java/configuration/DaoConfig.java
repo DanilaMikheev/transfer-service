@@ -10,7 +10,7 @@ import com.fintech.dao.impl.TransferDAOJdbc;
  * @author d.mikheev 13.05.19
  */
 public class DaoConfig {
-    private static final String TEST_DB_INIT_FILE = "test-data.sql";
+    public static final String TEST_DB_INIT_FILE = "test-data.sql";
 
     protected AccountDAO accountDAO;
     protected TransferDAO transferDAO;

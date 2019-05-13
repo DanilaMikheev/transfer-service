@@ -6,6 +6,7 @@ import com.fintech.web.data.UidData;
 import configuration.ApplicationContext;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -18,6 +19,12 @@ import javax.ws.rs.core.Response;
 public class TransferServiceIntegrationTest extends ApplicationContext {
 
     private static final int UID_LENGTH = 32;
+
+    @Before
+    public void init() {
+       initContext();
+       initDB();
+    }
 
     @After
     public void closeAll() {

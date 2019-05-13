@@ -4,6 +4,7 @@ import com.fintech.domain.Account;
 import configuration.DaoConfig;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -14,6 +15,11 @@ public class AccountDaoTest extends DaoConfig {
     private static final String existedAcc1="40817810123456789011";
     private static final String existedAcc2="40817810123456789012";
     private static final String notExistedAcc="40817840123456789011";
+
+    @Before
+    public void init(){
+        h2.createDB(TEST_DB_INIT_FILE);
+    }
 
     @After
     public void closeAll(){

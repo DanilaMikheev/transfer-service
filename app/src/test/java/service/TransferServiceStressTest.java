@@ -4,10 +4,7 @@ import com.fintech.domain.Account;
 import com.fintech.web.data.TransferData;
 import com.fintech.web.data.UidData;
 import configuration.ApplicationContext;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +16,12 @@ import java.util.stream.Collectors;
  * @author d.mikheev 13.05.19
  */
 public class TransferServiceStressTest extends ApplicationContext {
+
+    @Before
+    public void init() {
+        initContext();
+        initDB();
+    }
 
     @After
     public void closeAll(){
