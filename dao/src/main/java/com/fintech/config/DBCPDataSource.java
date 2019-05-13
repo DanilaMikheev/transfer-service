@@ -47,7 +47,7 @@ public class DBCPDataSource {
     }
 
     /**
-     * Create DB from scripts
+     * Create DB from file
      *
      * @param dbInitFile script fileName in resource folder
      */
@@ -60,6 +60,21 @@ public class DBCPDataSource {
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Create tables from statements
+     */
+    public void createDB() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        try (Connection conn = this.getConnection()) {
+            conn.createStatement().execute("create table account(id varchar(20), amount integer, clientid integer);");
+            conn.createStatement().execute("insert into account values ('40817810123456789011',1000,1);");
+            conn.createStatement().execute("insert into account values ('40817810123456789012',1000,2);");
+            conn.createStatement().execute("create table transfer(id varchar(36),accFrom varchar(20), accTo varchar(20), amount bigint, status integer, updated timestamp);");
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

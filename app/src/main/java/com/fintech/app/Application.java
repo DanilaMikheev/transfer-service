@@ -57,7 +57,7 @@ public class Application {
         server = HttpServer.createSimpleServer(ROOT, PORT);
         server.getServerConfiguration().addHttpHandler(endpoint);
         try {
-            h2.createDB(DB_INIT_FILE);
+            h2.createDB();
             server.start();
         } catch (IOException e) {
             e.printStackTrace();

@@ -30,7 +30,7 @@ public class TransferServiceIntegrationTest extends ApplicationContext {
         String uid = httpClient
                 .path("/api/transfers")
                 .request()
-                .post(Entity.entity(new TransferData(1, 1l, "40817810123456789011", "40817810123456789012", 100l),
+                .post(Entity.entity(new TransferData( 1l, "40817810123456789011", "40817810123456789012", 100l),
                         MediaType.APPLICATION_JSON), UidData.class).getUid();
         Assert.assertEquals(UID_LENGTH, uid.length());
 
@@ -55,7 +55,7 @@ public class TransferServiceIntegrationTest extends ApplicationContext {
         Response response = httpClient
                 .path("/api/transfers/")
                 .request()
-                .post(Entity.entity(new TransferData(1, 1l, "40817810123456789011", "40817810123456789012", 2000l),
+                .post(Entity.entity(new TransferData( 1l, "40817810123456789011", "40817810123456789012", 2000l),
                         MediaType.APPLICATION_JSON));
         Assert.assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatus());
     }
@@ -65,7 +65,7 @@ public class TransferServiceIntegrationTest extends ApplicationContext {
         Response response = httpClient
                 .path("/api/transfers/")
                 .request()
-                .post(Entity.entity(new TransferData(1, 777l, "40817810123456789011", "40817810123456789012", 100l),
+                .post(Entity.entity(new TransferData( 777l, "40817810123456789011", "40817810123456789012", 100l),
                         MediaType.APPLICATION_JSON));
         Assert.assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
     }

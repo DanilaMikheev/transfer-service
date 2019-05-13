@@ -34,7 +34,7 @@ public class TransferServiceStressTest extends ApplicationContext {
             uids.add(httpClient
                     .path("/api/transfers")
                     .request()
-                    .post(Entity.entity(new TransferData(1, 1l, "40817810123456789011", "40817810123456789012", 1l),
+                    .post(Entity.entity(new TransferData( 1l, "40817810123456789011", "40817810123456789012", 1l),
                             MediaType.APPLICATION_JSON), UidData.class).getUid());
         }
         Thread.sleep(3000); // wait before task complete
