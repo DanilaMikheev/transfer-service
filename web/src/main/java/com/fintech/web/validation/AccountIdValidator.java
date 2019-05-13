@@ -5,6 +5,8 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 /**
+ * Custom validator for validation anotation
+ *
  * @author d.mikheev 08.05.19
  */
 public class AccountIdValidator implements ConstraintValidator<AccountId, String> {

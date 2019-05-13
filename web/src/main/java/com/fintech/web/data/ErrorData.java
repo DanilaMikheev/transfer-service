@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * Error body
+ *
  * @author d.mikheev 13.05.19
  */
 @Data

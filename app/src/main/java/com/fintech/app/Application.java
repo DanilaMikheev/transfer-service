@@ -17,6 +17,8 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
 
 /**
+ * Create http server and initialize H2
+ *
  * @author d.mikheev on 09.05.19
  */
 public class Application {

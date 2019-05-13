@@ -27,6 +27,9 @@ public class TransferDAOJdbc implements TransferDAO {
     }
 
     @Override
+    /**
+     * @inheritDoc
+     */
     public boolean init(String uid, String accFrom, String accTo, Long amount) {
         QueryRunner run = new QueryRunner(dataSource);
         try {
@@ -39,6 +42,9 @@ public class TransferDAOJdbc implements TransferDAO {
     }
 
     @Override
+    /**
+     * @inheritDoc
+     */
     public boolean updateStatus(String uid, int status) {
         QueryRunner run = new QueryRunner(dataSource);
         try {
@@ -51,6 +57,9 @@ public class TransferDAOJdbc implements TransferDAO {
     }
 
     @Override
+    /**
+     * @inheritDoc
+     */
     public Transfer get(String uid) {
         QueryRunner run = new QueryRunner(dataSource);
         ResultSetHandler<Transfer> h = new BeanHandler<>(Transfer.class);

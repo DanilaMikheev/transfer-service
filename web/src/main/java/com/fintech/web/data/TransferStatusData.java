@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * Get transfer status response body
+ *
  * @author d.mikheev 13.05.19
  */
 @Data

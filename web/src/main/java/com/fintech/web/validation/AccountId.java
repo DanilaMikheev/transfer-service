@@ -5,6 +5,8 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
+ * Account validation annotation
+ *
  * @author d.mikheev 08.05.19
  */
 @Documented

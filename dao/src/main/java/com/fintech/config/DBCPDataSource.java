@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
+ * H2 configuration
+ *
  * @author d.mikheev on 11.05.19
  */
 public class DBCPDataSource {
@@ -44,6 +46,11 @@ public class DBCPDataSource {
         return ds;
     }
 
+    /**
+     * Create DB from scripts
+     *
+     * @param dbInitFile script fileName in resource folder
+     */
     public void createDB(String dbInitFile) {
         ClassLoader classLoader = getClass().getClassLoader();
         try (Connection conn = this.getConnection()) {

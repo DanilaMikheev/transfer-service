@@ -17,6 +17,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Transfer service simple implementation
+ *
  * @author d.mikheev 08.05.19
  */
 public class SimpleTransferService implements TransferService {
@@ -31,6 +33,9 @@ public class SimpleTransferService implements TransferService {
         this.transferDAO = transferDAO;
     }
 
+    /**
+     * @inheritDoc
+     */
     public TransferStatus get(String id) {
         Transfer transfer = transferDAO.get(id);
         if (transfer==null)
@@ -38,6 +43,16 @@ public class SimpleTransferService implements TransferService {
         return TransferStatus.valueOf(transfer.getStatus());
     }
 
+    /**
+     * Check that transfer is possible for sender
+     *
+     * @param clientId clientId
+     * @param acc client account
+     * @param amount transfer amount
+     * @return Account entity if check passed
+     * @throws NoPermissionException if clientId not match with accFrom account owner
+     * @throws InsufficientFundsException if amount greater than balance accFrom account number
+     */
     private Account checkSender(Long clientId, String acc, Long amount) throws NoPermissionException, InsufficientFundsException {
         Account account = accountDAO.get(acc);
         if (account == null)
@@ -49,6 +64,12 @@ public class SimpleTransferService implements TransferService {
         return account;
     }
 
+    /**
+     * Get receiver account
+     *
+     * @param acc receiver account number
+     * @return receiver account entity
+     */
     private Account checkReceiver(String acc) {
         Account account = accountDAO.get(acc);
         if (account == null)
@@ -57,6 +78,9 @@ public class SimpleTransferService implements TransferService {
     }
 
     @Override
+    /**
+     * @inheritDoc
+     */
     public String processTransfer(Long clientId, String accFrom, String accTo, Long amount) throws NoPermissionException, InsufficientFundsException {
         Account sender = checkSender(clientId, accFrom, amount);
         Account receiver = checkReceiver(accTo);
@@ -82,6 +106,10 @@ public class SimpleTransferService implements TransferService {
     }
 
     @AllArgsConstructor
+    /**
+     *
+     * Exutor task for providing transactions
+     */
     private class TransferTask implements Runnable {
         private String uuid;
         private Account sender;

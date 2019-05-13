@@ -9,6 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * Create transfer request body
+ *
  * @author d.mikheev 08.05.19
  */
 @Data

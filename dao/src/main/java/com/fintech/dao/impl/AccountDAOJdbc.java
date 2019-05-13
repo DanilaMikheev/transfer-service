@@ -24,6 +24,9 @@ public class AccountDAOJdbc implements AccountDAO {
     }
 
     @Override
+    /**
+     * @inheritDoc
+     */
     public Account get(String id) {
         QueryRunner run = new QueryRunner(dataSource);
         ResultSetHandler<Account> h = new BeanHandler<>(Account.class);
@@ -36,6 +39,9 @@ public class AccountDAOJdbc implements AccountDAO {
     }
 
     @Override
+    /**
+     * @inheritDoc
+     */
     public boolean sendFunds(Account from, Account to, Long amount) {
         if ((from==null)||(to==null))
             return false;

@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ *  Uid response body
+ *
  * @author d.mikheev 13.05.19
  */
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
