@@ -15,16 +15,6 @@ Billing RESTful webservice for processing transfers.
 * [Gradle]()
 * [H2]()
 
-#### Running the tests
-1. Download or clone the project.
-2. Change to the root project directory.
-3. Run tests using gradle wrapper:
-```bash
-./gradlew tests
-```
-##### About tests
-All modules except [web]() contain tests. App module contains integration tests and stress tests. Stress tests passed if 300 concurrently transfers from one account to other processed successfully.
-
 #### Running instructions
 1. Download or clone the project.
 2. Change to the root project directory.
@@ -42,6 +32,16 @@ gradlew.bat :app:jar
   java -jar transfer-service-0.1.0.jar
   ```
 If something isn't working or you have any questions, feel free to contact me.
+
+#### Running the tests
+1. Download or clone the project.
+2. Change to the root project directory.
+3. Run tests using gradle wrapper:
+```bash
+./gradlew tests
+```
+##### About tests
+All modules except [web]() contain tests. App module contains integration tests and stress tests. Stress tests passed if 300 concurrently transfers from one account to other processed successfully.
 
 #### Future improvements
 I recommend to separate one huge debit+credit transaction on two small transactions. First holds money on sender account then second try to add money to receiver account. This improvement will reduce number of locks and locking time duration in account table.
