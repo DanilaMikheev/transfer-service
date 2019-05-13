@@ -4,7 +4,7 @@ Billing RESTful webservice for processing transfers.
 #### Modules
 * [app]() - assembly module that initialize Jersey http server, inject service beans, initialize H2 db, creates application uber jar.
 * [dao]() - dao module provides operations with Account and Transfer entities. Module includes manual transfer transaction management.
-* [core]() - transfer service implementation. Service process transfers concurrently. If transfer didn't conduct transaction, then it creates new runnable task to repeat the transfer (no more than 5 times)
+* [core]() - transfer service implementation. Service process transfers concurrently if transfer didn't conduct transaction, then it creates new runnable task to repeat the transfer (no more than 5 times)
 * [web]() - web module. Contains rest controller implementation that includes custom @accountId annotation validation.
 
 #### Frameworks and libraries
@@ -22,8 +22,8 @@ Billing RESTful webservice for processing transfers.
 ```bash
 ./gradlew tests
 ```
-#####About tests
-All modules except web contain tests. App module contains integration tests and stress tests. Stress tests passed if 300 concurrently transfers from one account to other processed successfully.
+##### About tests
+All modules except [web]() contain tests. App module contains integration tests and stress tests. Stress tests passed if 300 concurrently transfers from one account to other processed successfully.
 
 #### Running instructions
 1. Download or clone the project.
